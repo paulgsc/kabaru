@@ -1,0 +1,26 @@
+name: Paper Reading Bot (Rust)
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  setup_paper_reading:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.title, '[NEW PAPER]')
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+
+    - name: Build and run paper setup script
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        cd .github/scripts
+        cargo build --release
+        ./target/release/paper_setup
